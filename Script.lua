@@ -29,7 +29,7 @@ local function ClonedService(name)
     local Service = function(_, serviceName) return __lt.gs(serviceName) end
     local Reference = (cloneref) or function(reference) return reference end
     return __lt.cs(name, Reference)
-end0
+end
 
 pcall(function() getgenv().RakeGui = true end)
 
@@ -140,7 +140,7 @@ end
 
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/ltseverydayyou/Rayfield-backup/main/Rayfield'))()
 local Window = Rayfield:CreateWindow({
-    Name = The Rake JTO",
+    Name = "The Rake JTO",
     LoadingTitle = "Let's Larp",
     LoadingSubtitle = "Just This Once...",
     ConfigurationSaving = {
@@ -523,20 +523,19 @@ RunService.Heartbeat:Connect(function()
 
 	if _G.BearTrapESP == true then
         local trapFolder = ClonedService("Workspace").Debris:FindFirstChild("Traps")
+        if _G.BearTrapESP then
+        local trapFolder = Workspace:FindFirstChild("Debris") and Workspace.Debris:FindFirstChild("Traps")
         if trapFolder then
             for _, trap in pairs(trapFolder:GetChildren()) do
-                if trap.Name == "RakeTrapModel" then
-                    if not trap:FindFirstChild("TrapChams") then
-                        local TrapChams = Instance.new("Highlight")
-                        TrapChams.Name = "TrapChams"
-                        TrapChams.Parent = trap
-                        TrapChams.Adornee = trap
-                        TrapChams.FillColor = Color3.fromRGB(255, 105, 180)
-                        TrapChams.OutlineColor = Color3.fromRGB(255, 255, 255)
-                        TrapChams.FillTransparency = 0.4
-                        TrapChams.OutlineTransparency = 0
-                        TrapChams.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                    end
+                if trap.Name == "RakeTrapModel" and not trap:FindFirstChild("TrapChams") then
+                    local TrapChams = Instance.new("Highlight")
+                    TrapChams.Name = "TrapChams"
+                    TrapChams.FillColor = Color3.fromRGB(255, 105, 180)
+                    TrapChams.OutlineColor = Color3.fromRGB(255, 255, 255)
+                    TrapChams.FillTransparency = 0.4
+                    TrapChams.OutlineTransparency = 0
+                    TrapChams.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                    TrapChams.Parent = trap
                 end
             end
         end
