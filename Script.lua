@@ -48,6 +48,7 @@ _G.FreeCamSpeed = 0.2
 _G.NoFog = false
 _G.InfStamina = false
 _G.InfNightVision = false
+_G.ExtendedHitbox = false
 _G.RakeKillAura = false
 _G.RakeChams = false
 _G.PlayerESP = false
@@ -267,25 +268,38 @@ PlayerTab:CreateSlider({ Name = "Field Of View", Range = {0, 120}, Increment = 1
 PlayerTab:CreateToggle({ Name = "Toggle WalkSpeed", CurrentValue = false, Flag = "tglSpeed", Callback = function(s) _G.enableSpeed = s end })
 PlayerTab:CreateSlider({ Name = "WalkSpeed", Range = {0, 30}, Increment = 1, CurrentValue = 16, Flag = "walkspeed", Callback = function(s) _G.WalkSpeedd = s end })
 
-local RakeKillauraToggle = ExploitsTab:CreateToggle({
-    Name = "Rake Killaura", CurrentValue = false, Flag = "RakeAura",
+ExploitsTab:CreateToggle({
+    Name = "Extended Hitbox",
+    CurrentValue = false,
+    Flag = "ExtHitbox",
+    Callback = function(state)
+        _G.ExtendedHitbox = state
+        Rayfield:Notify({Title = "Hitbox", Content = "Extended Hitbox: " .. tostring(state), Duration = 2})
+    end,
+})
+
+local KillAuraToggle = ExploitsTab:CreateToggle({
+    Name = "Kill Aura",
+    CurrentValue = false,
+    Flag = "RakeAura",
     Callback = function(state)
         _G.RakeKillAura = state
-        Rayfield:Notify({Title = "Rake Killaura", Content = "Rake Killaura : "..tostring(state), Duration = 1, Image = 4483362458})
         
         if state then
             task.spawn(function()
                 while _G.RakeKillAura do
                     task.wait(0.1)
-                    pcall(function()
-                        local rake = Workspace:FindFirstChild("Rake")
-                        local hrp = GetRootPart()
-                        if rake and hrp and (rake.HumanoidRootPart.Position - hrp.Position).Magnitude < 200 then
-                            LocalPlayer.Character.StunStick.Event:FireServer("S")
-                            task.wait()
-                            LocalPlayer.Character.StunStick.Event:FireServer("H", rake.HumanoidRootPart) 
-                        end
-                    end)
+                    if _G.ExtendedHitbox then
+                        pcall(function()
+                            local rake = Workspace:FindFirstChild("Rake")
+                            local hrp = GetRootPart()
+                            if rake and hrp and (rake.HumanoidRootPart.Position - hrp.Position).Magnitude < 200 then
+                                LocalPlayer.Character.StunStick.Event:FireServer("S")
+                                task.wait()
+                                LocalPlayer.Character.StunStick.Event:FireServer("H", rake.HumanoidRootPart) 
+                            end
+                        end)
+                    end
                 end
             end)
         end
@@ -293,8 +307,13 @@ local RakeKillauraToggle = ExploitsTab:CreateToggle({
 })
 
 ExploitsTab:CreateKeybind({
-    Name = "Toggle Killaura", CurrentKeybind = "R", HoldToInteract = false, Flag = "KillAuraKeybind",
-    Callback = function() RakeKillauraToggle:Set(not _G.RakeKillAura) end,
+    Name = "Toggle Kill Aura",
+    CurrentKeybind = "R",
+    HoldToInteract = false,
+    Flag = "KillAuraKeybind",
+    Callback = function() 
+        KillAuraToggle:Set(not _G.RakeKillAura) 
+    end,
 })
 
 ExploitsTab:CreateButton({
@@ -582,13 +601,16 @@ RunService.Heartbeat:Connect(function()
     
     if _G.NoFog then ReplicatedStorage.CurrentLightingProperties.FogEnd.Value = 9e9 end
 
-    if _G.RakeKillAura then
+    if _G.ExtendedHitbox then
         pcall(function()
             local rake = Workspace:FindFirstChild("Rake")
-            if rake then LocalPlayer.Character.StunStick.HitPart.Position = rake.HumanoidRootPart.Position end
+            local stick = LocalPlayer.Character:FindFirstChild("StunStick")
+            if rake and stick and stick:FindFirstChild("HitPart") then 
+                stick.HitPart.Position = rake.HumanoidRootPart.Position 
+            end
         end)
     end
-    
+			
     if _G.InstaOpenSupplyDrop then
         pcall(function()
             local prompt = Workspace.Debris.SupplyCrates.Box.GUIPart.ProximityPrompt
