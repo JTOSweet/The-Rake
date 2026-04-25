@@ -23,7 +23,7 @@ end)()
 
 ---@diagnostic disable: undefined-global
 if game.GameId ~= 847722000 then return end
-if getgenv().RakeGui then return end
+if getgenv().RakeGui then end
 
 local function ClonedService(name)
     local Service = function(_, serviceName) return __lt.gs(serviceName) end
@@ -488,7 +488,6 @@ end)
 
 RunService.Heartbeat:Connect(function()
     if not AllowRunService then return end
-
     if _G.ScrapESP then
         for _, v in pairs(Workspace.Filter.ScrapSpawns:GetDescendants()) do
             if v.Name == "Scrap" and not v:GetAttribute("ScrapESP") then
@@ -524,7 +523,6 @@ RunService.Heartbeat:Connect(function()
     if _G.BearTrapESP then
         local debris = Workspace:FindFirstChild("Debris")
         local trapFolder = debris and debris:FindFirstChild("Traps")
-        
         if trapFolder then
             for _, trap in pairs(trapFolder:GetChildren()) do
                 if trap.Name == "RakeTrapModel" and not trap:FindFirstChild("TrapChams") then
@@ -540,33 +538,36 @@ RunService.Heartbeat:Connect(function()
             end
         end
     end
-	
-    if _G.SupplyDropESP then
-        for _, v in pairs(Workspace.Debris.SupplyCrates:GetChildren()) do
-            if v.Name == "Box" and not v:GetAttribute("SupplyDropESP") then
-                v:SetAttribute("SupplyDropESP", true)
-                local boxEsp = Drawing.new("Text")
-                boxEsp.Text = "[ SUPPLY DROP ]"
-                boxEsp.Color = Color3.fromRGB(255, 255, 0)
-                boxEsp.Center = true
-                boxEsp.Size = 14
-                boxEsp.Outline = true
 
-                task.spawn(function()
-                    while _G.SupplyDropESP and v:IsDescendantOf(Workspace) do
-                        local cam = Workspace.CurrentCamera
-                        local pos, onScreen = cam:WorldToViewportPoint(v.HitBox.Position)
-                        if onScreen then
-                            boxEsp.Visible = true
-                            boxEsp.Position = Vector2.new(pos.X, pos.Y)
-                        else
-                            boxEsp.Visible = false
+    if _G.SupplyDropESP then
+        local crates = Workspace:FindFirstChild("Debris") and Workspace.Debris:FindFirstChild("SupplyCrates")
+        if crates then
+            for _, v in pairs(crates:GetChildren()) do
+                if v.Name == "Box" and not v:GetAttribute("SupplyDropESP") then
+                    v:SetAttribute("SupplyDropESP", true)
+                    local boxEsp = Drawing.new("Text")
+                    boxEsp.Text = "[ SUPPLY DROP ]"
+                    boxEsp.Color = Color3.fromRGB(255, 255, 0)
+                    boxEsp.Center = true
+                    boxEsp.Size = 14
+                    boxEsp.Outline = true
+
+                    task.spawn(function()
+                        while _G.SupplyDropESP and v:IsDescendantOf(Workspace) do
+                            local cam = Workspace.CurrentCamera
+                            local pos, onScreen = cam:WorldToViewportPoint(v.HitBox.Position)
+                            if onScreen then
+                                boxEsp.Visible = true
+                                boxEsp.Position = Vector2.new(pos.X, pos.Y)
+                            else
+                                boxEsp.Visible = false
+                            end
+                            task.wait()
                         end
-                        task.wait()
-                    end
-                    boxEsp:Remove()
-                    v:SetAttribute("SupplyDropESP", false)
-                end)
+                        boxEsp:Remove()
+                        v:SetAttribute("SupplyDropESP", false)
+                    end)
+                end
             end
         end
     end
