@@ -23,7 +23,11 @@ end)()
 
 ---@diagnostic disable: undefined-global
 if game.GameId ~= 847722000 then return end
-if getgenv().RakeGui then end
+if getgenv().RakeGui then 
+    pcall(function() Rayfield:Destroy() end)
+    getgenv().RakeGui = false 
+end
+
 
 local function ClonedService(name)
     local Service = function(_, serviceName) return __lt.gs(serviceName) end
