@@ -520,6 +520,27 @@ RunService.Heartbeat:Connect(function()
             end
         end
     end
+
+	if _G.BearTrapESP == true then
+        local trapFolder = ClonedService("Workspace").Debris:FindFirstChild("Traps")
+        if trapFolder then
+            for _, trap in pairs(trapFolder:GetChildren()) do
+                if trap.Name == "RakeTrapModel" then
+                    if not trap:FindFirstChild("TrapChams") then
+                        local TrapChams = Instance.new("Highlight")
+                        TrapChams.Name = "TrapChams"
+                        TrapChams.Parent = trap
+                        TrapChams.Adornee = trap
+                        TrapChams.FillColor = Color3.fromRGB(255, 105, 180)
+                        TrapChams.OutlineColor = Color3.fromRGB(255, 255, 255)
+                        TrapChams.FillTransparency = 0.4
+                        TrapChams.OutlineTransparency = 0
+                        TrapChams.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                    end
+                end
+            end
+        end
+    end
 			
     if _G.SupplyDropESP then
         for _, v in pairs(Workspace.Debris.SupplyCrates:GetChildren()) do
