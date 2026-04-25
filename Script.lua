@@ -521,10 +521,10 @@ RunService.Heartbeat:Connect(function()
         end
     end
 
-	if _G.BearTrapESP == true then
-        local trapFolder = ClonedService("Workspace").Debris:FindFirstChild("Traps")
-        if _G.BearTrapESP then
-        local trapFolder = Workspace:FindFirstChild("Debris") and Workspace.Debris:FindFirstChild("Traps")
+    if _G.BearTrapESP then
+        local debris = Workspace:FindFirstChild("Debris")
+        local trapFolder = debris and debris:FindFirstChild("Traps")
+        
         if trapFolder then
             for _, trap in pairs(trapFolder:GetChildren()) do
                 if trap.Name == "RakeTrapModel" and not trap:FindFirstChild("TrapChams") then
@@ -540,7 +540,7 @@ RunService.Heartbeat:Connect(function()
             end
         end
     end
-			
+	
     if _G.SupplyDropESP then
         for _, v in pairs(Workspace.Debris.SupplyCrates:GetChildren()) do
             if v.Name == "Box" and not v:GetAttribute("SupplyDropESP") then
