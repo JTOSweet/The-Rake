@@ -29,13 +29,7 @@ local function ClonedService(name)
     local Service = function(_, serviceName) return __lt.gs(serviceName) end
     local Reference = (cloneref) or function(reference) return reference end
     return __lt.cs(name, Reference)
-end
-
-if syn then
-    __lt.cm("StarterGui", "SetCore", "SendNotification", {Title = "Info", Text = "You are a synapse x user! This script will 100% work", Duration = 5})
-else
-    __lt.cm("StarterGui", "SetCore", "SendNotification", {Title = "Info", Text = "You are not a synapse x user. This script is likely not to work", Duration = 5})
-end
+end0
 
 pcall(function() getgenv().RakeGui = true end)
 
@@ -150,8 +144,8 @@ local Window = Rayfield:CreateWindow({
     LoadingSubtitle = "Just This Once...",
     ConfigurationSaving = {
         Enabled = true,
-        FolderName = "ProjectTheRake",
-        FileName = "Project"
+        FolderName = "JTORake",
+        FileName = "Rake"
     }
 })
 
@@ -370,6 +364,206 @@ SettingsTab:CreateButton({ Name = "Unload Gui", Callback = DestroyUI })
 local mt = getrawmetatable(game)
 local namecall = mt.__namecall
 setreadonly(mt, false)
+
+RunService.Heartbeat:Connect(function()
+    if not AllowRunService then return end
+
+    if _G.FlareGunESP then
+        local flare = Workspace:FindFirstChild("FlareGunPickUp")
+        if flare and not flare:GetAttribute("FlareGunESP") then
+            flare:SetAttribute("FlareGunESP", true)
+            local esp = Drawing.new("Text")
+            esp.Text = "[ Flare Gun ]"
+            esp.Color = Color3.fromRGB(0, 225, 255)
+            esp.Center = true
+            esp.Size = 13
+            esp.Outline = true
+            
+            task.spawn(function()
+                while _G.FlareGunESP and flare:IsDescendantOf(Workspace) do
+                    local cam = Workspace.CurrentCamera
+                    local pos, onScreen = cam:WorldToViewportPoint(flare.PrimaryPart.Position)
+                    if onScreen then
+                        esp.Visible = true
+                        esp.Position = Vector2.new(pos.X, pos.Y)
+                    else
+                        esp.Visible = false
+                    end
+                    task.wait()
+                end
+                esp:Remove()
+                flare:SetAttribute("FlareGunESP", false)
+            end)
+        end
+    end
+
+    if _G.RakeChams then
+        local rake = Workspace:FindFirstChild("Rake")
+        if rake and rake:FindFirstChild("Head") and not rake:GetAttribute("hasESP") then
+            rake:SetAttribute("hasESP", true)
+            local rakeEsp = Drawing.new("Text")
+            rakeEsp.Color = Color3.fromRGB(255, 0, 0)
+            rakeEsp.Center = true
+            rakeEsp.Outline = true
+            rakeEsp.Size = 14
+
+            task.spawn(function()
+                while _G.RakeChams and rake:IsDescendantOf(Workspace) do
+                    local cam = Workspace.CurrentCamera
+                    local pos, onScreen = cam:WorldToViewportPoint(rake.Head.Position)
+                    if onScreen then
+                        local health = rake:FindFirstChild("Monster") and rake.Monster.Health or 0
+                        rakeEsp.Text = "Rake [HP: " .. math.floor(health) .. "]"
+                        rakeEsp.Visible = true
+                        rakeEsp.Position = Vector2.new(pos.X, pos.Y)
+                    else
+                        rakeEsp.Visible = false
+                    end
+                    task.wait()
+                end
+                rakeEsp:Remove()
+                rake:SetAttribute("hasESP", false)
+            end)
+        end
+    end
+end)
+	
+RunService.Heartbeat:Connect(function()
+    if not AllowRunService or not _G.PlayerESP then return end
+    
+    for _, v in pairs(Players:GetPlayers()) do
+        if v ~= LocalPlayer and v.Character and v.Character:FindFirstChild("Head") then
+            if not v.Character:GetAttribute("PlayerESP") then
+                v.Character:SetAttribute("PlayerESP", true)
+                local pEsp = Drawing.new("Text")
+                pEsp.Color = Color3.fromRGB(0, 255, 100)
+                pEsp.Center = true
+                pEsp.Outline = true
+                pEsp.Size = 13
+
+                task.spawn(function()
+                    while _G.PlayerESP and v.Character and v.Character:Parent() do
+                        local cam = Workspace.CurrentCamera
+                        local pos, onScreen = cam:WorldToViewportPoint(v.Character.Head.Position)
+                        if onScreen then
+                            pEsp.Visible = true
+                            pEsp.Position = Vector2.new(pos.X, pos.Y)
+                            if _G.PlayerESPShowDistance then
+                                local dist = v:FindFirstChild("DistanceTravelled") and v.DistanceTravelled.Value or 0
+                                pEsp.Text = v.Name .. " [" .. math.floor(dist) .. "m]"
+                            else
+                                pEsp.Text = v.Name
+                            end
+                        else
+                            pEsp.Visible = false
+                        end
+                        task.wait()
+                    end
+                    pEsp:Remove()
+                    if v.Character then v.Character:SetAttribute("PlayerESP", false) end
+                end)
+            end
+        end
+    end
+end)
+
+RunService.Heartbeat:Connect(function()
+    if not AllowRunService then return end
+
+    if _G.ScrapESP then
+        for _, v in pairs(Workspace.Filter.ScrapSpawns:GetDescendants()) do
+            if v.Name == "Scrap" and not v:GetAttribute("ScrapESP") then
+                v:SetAttribute("ScrapESP", true)
+                local sEsp = Drawing.new("Text")
+                sEsp.Color = Color3.fromRGB(255, 200, 50)
+                sEsp.Size = 12
+                sEsp.Outline = true
+                sEsp.Center = true
+                
+                local points = v.Parent:FindFirstChild("PointsVal") and v.Parent.PointsVal.Value or 0
+                sEsp.Text = "Scrap [Pts: " .. points .. "]"
+
+                task.spawn(function()
+                    while _G.ScrapESP and v:IsDescendantOf(Workspace) do
+                        local cam = Workspace.CurrentCamera
+                        local pos, onScreen = cam:WorldToViewportPoint(v.Position)
+                        if onScreen then
+                            sEsp.Visible = true
+                            sEsp.Position = Vector2.new(pos.X, pos.Y)
+                        else
+                            sEsp.Visible = false
+                        end
+                        task.wait()
+                    end
+                    sEsp:Remove()
+                    v:SetAttribute("ScrapESP", false)
+                end)
+            end
+        end
+    end
+			
+    if _G.SupplyDropESP then
+        for _, v in pairs(Workspace.Debris.SupplyCrates:GetChildren()) do
+            if v.Name == "Box" and not v:GetAttribute("SupplyDropESP") then
+                v:SetAttribute("SupplyDropESP", true)
+                local boxEsp = Drawing.new("Text")
+                boxEsp.Text = "[ SUPPLY DROP ]"
+                boxEsp.Color = Color3.fromRGB(255, 255, 0)
+                boxEsp.Center = true
+                boxEsp.Size = 14
+                boxEsp.Outline = true
+
+                task.spawn(function()
+                    while _G.SupplyDropESP and v:IsDescendantOf(Workspace) do
+                        local cam = Workspace.CurrentCamera
+                        local pos, onScreen = cam:WorldToViewportPoint(v.HitBox.Position)
+                        if onScreen then
+                            boxEsp.Visible = true
+                            boxEsp.Position = Vector2.new(pos.X, pos.Y)
+                        else
+                            boxEsp.Visible = false
+                        end
+                        task.wait()
+                    end
+                    boxEsp:Remove()
+                    v:SetAttribute("SupplyDropESP", false)
+                end)
+            end
+        end
+    end
+end)
+
+RunService.Heartbeat:Connect(function()
+    if not AllowRunService or not _G.LocationESP then return end
+    
+    for name, data in pairs(Locations) do
+        if not data.hasESP then
+            data.hasESP = true
+            local locEsp = Drawing.new("Text")
+            locEsp.Text = "[ " .. name:gsub("_", " ") .. " ]"
+            locEsp.Color = Color3.fromRGB(255, 150, 0)
+            locEsp.Center = true
+            locEsp.Outline = true
+            locEsp.Size = 14
+
+            task.spawn(function()
+                while _G.LocationESP do
+                    local cam = Workspace.CurrentCamera
+                    local pos, onScreen = cam:WorldToViewportPoint(data.Position)
+                    if onScreen then
+                        locEsp.Visible = true
+                        locEsp.Position = Vector2.new(pos.X, pos.Y)
+                    else
+                        locEsp.Visible = false
+                    end
+                    task.wait()
+                end
+                locEsp:Remove()
+                data.hasESP = false
+            end)
+        end
+    end
+end)
 
 mt.__namecall = function(self, ...)
     if _G.NoFallDMG then
